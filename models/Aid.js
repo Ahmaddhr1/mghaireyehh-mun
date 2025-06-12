@@ -11,11 +11,10 @@ const AidSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    recipient: {
+    recipients: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Recipient",
-      required: true,
-    },
+    }],
   },
   { timestamps: true }
 );

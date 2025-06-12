@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 
 const recipientSchema = new mongoose.Schema(
   {
-    fullName: { type: String, required: true, },
+    fullName: { type: String, required: true },
     phoneNumber: {
       type: Number,
       default: 0,
-      unique:true,
-      required:true
+      unique: true,
+      required: true,
     },
     financialAidCount: {
       type: Number,
@@ -17,9 +17,15 @@ const recipientSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    aids: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Aid",
+      default: [],
+    },
   },
   { timestamps: true }
 );
 
-const Recipient = mongoose.models.Recipient || mongoose.model("Recipient", recipientSchema);
+const Recipient =
+  mongoose.models.Recipient || mongoose.model("Recipient", recipientSchema);
 export default Recipient;

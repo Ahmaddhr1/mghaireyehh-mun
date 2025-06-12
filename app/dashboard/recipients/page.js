@@ -114,9 +114,6 @@ const RecipientsPage = () => {
                         "حذف"
                       )}
                     </Button>
-                    <Button size="sm" className="h-7 px-2">
-                      مساعدة
-                    </Button>
                   </TableCell>
                 </TableRow>
               ))

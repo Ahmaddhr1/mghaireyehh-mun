@@ -75,6 +75,7 @@ const RecipientsPage = () => {
         <Table>
           <TableHeader className="bg-gray-50">
             <TableRow>
+              <TableHead className="text-right w-[40%]">#</TableHead>
               <TableHead className="text-right w-[40%]">الاسم الكامل</TableHead>
               <TableHead className="text-right w-[30%]">رقم الهاتف</TableHead>
               <TableHead className="text-center w-[30%]">العمليات</TableHead>
@@ -88,8 +89,9 @@ const RecipientsPage = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              recipients.map(({ _id, fullName, phoneNumber }) => (
+              recipients.map(({_id, fullName, phoneNumber }, index) => (
                 <TableRow key={_id} className="hover:bg-gray-50/50">
+                  <TableCell>{index+1}</TableCell>
                   <TableCell>{fullName}</TableCell>
                   <TableCell>{phoneNumber || "-"}</TableCell>
                   <TableCell className="flex justify-center gap-2">

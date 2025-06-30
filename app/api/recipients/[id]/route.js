@@ -4,12 +4,12 @@ import Aid from "@/models/Aid";
 import { NextResponse } from "next/server";
 
 export async function DELETE(req, { params }) {
-  const { id } = await params;
+  const { id: recipientId } = params;
 
   try {
     await connectToDB();
 
-    const deletedRecipient = await Recipient.findByIdAndDelete(id);
+    const deletedRecipient = await Recipient.findByIdAndDelete(recipientId);
 
     if (!deletedRecipient) {
       return NextResponse.json(
@@ -17,10 +17,11 @@ export async function DELETE(req, { params }) {
         { status: 404 }
       );
     }
-    
-    await Aid.updateMany({ recipients: id }, { $pull: { recipients: id } });
 
-    // Optionally delete any Aid with no recipients left
+    // إزالة المستفيد من جميع المعونات
+    await Aid.updateMany({ recipients: recipientId }, { $pull: { recipients: recipientId } });
+
+    // حذف المعونات التي ليس لها أي مستفيدين
     await Aid.deleteMany({ recipients: { $size: 0 } });
 
     return NextResponse.json({
@@ -34,20 +35,23 @@ export async function DELETE(req, { params }) {
 
 export async function GET(req, { params }) {
   await connectToDB();
-  const { id } = await params;
+  const { id: recipientId } = params;
+
   try {
-    const recipient = await Recipient.findById(id).populate("aids");
+    const recipient = await Recipient.findById(recipientId).populate("aids.aid");
+
     if (!recipient) {
       return NextResponse.json(
         { error: "المستفيد غير موجود" },
         { status: 404 }
       );
     }
+
     return NextResponse.json(recipient);
-  } catch (e) {
-    console.log(e.message);
+  } catch (error) {
+    console.log(error.message);
     return NextResponse.json(
-      { error: e.message || "حدث خطأ أثناء جلب البيانات" },
+      { error: error.message || "حدث خطأ أثناء جلب البيانات" },
       { status: 500 }
     );
   }

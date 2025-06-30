@@ -2,11 +2,13 @@ import Recipient from "@/models/Recipient";
 import { connectToDB } from "@/lib/connectDb";
 import { NextResponse } from "next/server";
 
+const allowedFinancialSituations = ["poor", "very poor"];
+
 export async function POST(req) {
   try {
     await connectToDB();
     const body = await req.json();
-    const { fullName, phoneNumber } = body;
+    const { fullName, phoneNumber, financialSituation } = body;
 
     if (!fullName) {
       return NextResponse.json(
@@ -15,13 +17,28 @@ export async function POST(req) {
       );
     }
     if (!phoneNumber) {
-      return NextResponse.json({ error: "رقم الهاتف مطلوب." }, { status: 400 });
+      return NextResponse.json(
+        { error: "رقم الهاتف مطلوب." },
+        { status: 400 }
+      );
+    }
+    if (!financialSituation) {
+      return NextResponse.json(
+        { error: "الوضع المالي مطلوب." },
+        { status: 400 }
+      );
+    }
+    if (!allowedFinancialSituations.includes(financialSituation)) {
+      return NextResponse.json(
+        { error: "الوضع المالي غير صالح." },
+        { status: 400 }
+      );
     }
 
     const existing = await Recipient.findOne({ phoneNumber });
     if (existing) {
       return NextResponse.json(
-        { error: " رقم المستفيد موجود مسبقًا." },
+        { error: "رقم المستفيد موجود مسبقًا." },
         { status: 400 }
       );
     }
@@ -29,6 +46,7 @@ export async function POST(req) {
     const newRecipient = await Recipient.create({
       fullName,
       phoneNumber,
+      financialSituation,
     });
 
     return NextResponse.json(

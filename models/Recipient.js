@@ -9,6 +9,10 @@ const recipientSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
+    financialSituation:{
+      type:"String",
+      enum:["poor","very poor"]
+    },
     financialAidCount: {
       type: Number,
       default: 0,
@@ -17,15 +21,24 @@ const recipientSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    aids: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Aid",
-      default: [],
-    },
+    aids: [
+      {
+        aid: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Aid",
+          required: true,
+        },
+        assignedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
 
 const Recipient =
   mongoose.models.Recipient || mongoose.model("Recipient", recipientSchema);
+
 export default Recipient;

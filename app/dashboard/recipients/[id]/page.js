@@ -33,7 +33,7 @@ const Page = () => {
     return (
       <div className="flex flex-col gap-2 items-center">
         <Loading />
-        <p>جاري تحميل</p>
+        <p>جاري التحميل</p>
       </div>
     );
   }
@@ -62,6 +62,10 @@ const Page = () => {
         <div>
           <h2 className="text-lg font-semibold text-gray-600">رقم الهاتف</h2>
           <p className="text-gray-900">{data.phoneNumber}</p>
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold text-gray-600">الوضع المادي</h2>
+          <p className="text-gray-900">{data.financialSituation==="very poor" ? "فقير جدا": "فقير" }</p>
         </div>
 
         <div className="flex gap-6">
@@ -101,6 +105,9 @@ const Page = () => {
             <TableHeader>
               <TableRow className="bg-gray-100">
                 <TableHead className="border border-gray-300 px-4 py-2 text-right">
+                  #
+                </TableHead>
+                <TableHead className="border border-gray-300 px-4 py-2 text-right">
                   النوع
                 </TableHead>
                 <TableHead className="border border-gray-300 px-4 py-2 text-right">
@@ -113,33 +120,27 @@ const Page = () => {
             </TableHeader>
 
             <TableBody>
-              {data?.aids?.length > 0 ? (
-                data.aids.map((aid) => (
-                  <TableRow
-                    key={aid._id}
-                    className="hover:bg-gray-50 even:bg-gray-100"
-                  >
-                    <TableCell className="border border-gray-300 px-4 py-2 text-right capitalize">
-                      {aid.type === "financial" ? "مالية" : "معنوية"}
-                    </TableCell>
-                    <TableCell className="border border-gray-300 px-4 py-2 text-right">
-                      {aid.description}
-                    </TableCell>
-                    <TableCell className="border border-gray-300 px-4 py-2 text-right">
-                      {new Date(aid.createdAt).toLocaleDateString("ar-EG")}
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={3}
-                    className="border border-gray-300 px-4 py-2 text-center"
-                  >
-                    لا توجد مساعدات مسجلة
+              {data.aids.map((entry, index) => (
+                <TableRow
+                  key={entry.aid?._id || index}
+                  className="hover:bg-gray-50 even:bg-gray-100"
+                >
+                  <TableCell className="border border-gray-300 px-4 py-2 text-right capitalize">
+                    {index + 1}
+                  </TableCell>
+                  <TableCell className="border border-gray-300 px-4 py-2 text-right capitalize">
+                    {entry.aid?.type === "financial" ? "مالية" : "معنوية"}
+                  </TableCell>
+                  <TableCell className="border border-gray-300 px-4 py-2 text-right">
+                    {entry.aid?.description || "بدون وصف"}
+                  </TableCell>
+                  <TableCell className="border border-gray-300 px-4 py-2 text-right">
+                    {entry.assignedAt
+                      ? new Date(entry.assignedAt).toLocaleDateString("ar-EG")
+                      : "غير معروف"}
                   </TableCell>
                 </TableRow>
-              )}
+              ))}
             </TableBody>
           </Table>
         ) : (

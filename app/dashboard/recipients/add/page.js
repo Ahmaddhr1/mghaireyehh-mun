@@ -11,9 +11,11 @@ import { useRouter } from "next/navigation";
 
 const AddRecipientPage = () => {
   const router = useRouter();
+
   const [form, setForm] = useState({
     fullName: "",
     phoneNumber: "",
+    financialSituation: "",
   });
 
   const handleChange = (e) => {
@@ -36,6 +38,7 @@ const AddRecipientPage = () => {
       setForm({
         fullName: "",
         phoneNumber: "",
+        financialSituation: "",
       });
       router.replace("/dashboard/recipients");
     },
@@ -47,15 +50,21 @@ const AddRecipientPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!form.fullName || !form.phoneNumber || !form.financialSituation) {
+      toast.error("يرجى تعبئة جميع الحقول");
+      return;
+    }
+
     mutation.mutate(form);
   };
 
   return (
-    <section className="section" dir="rtl">
-      <header className="mb-3">
-        <h1 className="header text-xl font-bold">إضافة مستفيد</h1>
+    <section className="section max-w-md mx-auto p-4" dir="rtl">
+      <header className="mb-4">
+        <h1 className="text-2xl font-bold text-gray-800">إضافة مستفيد</h1>
       </header>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-md">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Input
           type="text"
           placeholder="الاسم الكامل"
@@ -63,6 +72,7 @@ const AddRecipientPage = () => {
           value={form.fullName}
           onChange={handleChange}
         />
+
         <Input
           type="text"
           inputMode="numeric"
@@ -71,6 +81,19 @@ const AddRecipientPage = () => {
           value={form.phoneNumber}
           onChange={handleChange}
         />
+
+        <select
+          name="financialSituation"
+          value={form.financialSituation}
+          onChange={handleChange}
+          className="border rounded px-3 py-2 text-right"
+          required
+        >
+          <option value="">اختر الوضع المالي</option>
+          <option value="poor">فقير</option>
+          <option value="very poor">فقير جداً</option>
+        </select>
+
         <Button type="submit" disabled={mutation.isPending}>
           {mutation.isPending ? (
             <span className="flex items-center gap-2">
@@ -78,7 +101,7 @@ const AddRecipientPage = () => {
               جاري الإضافة...
             </span>
           ) : (
-            "إضاقة"
+            "إضافة"
           )}
         </Button>
       </form>

@@ -4,59 +4,50 @@ import Recipient from "@/models/Recipient";
 import { NextResponse } from "next/server";
 
 export async function PUT(req, { params }) {
-  await connectToDB();
-  const { id: aidId } = await params;
+  await connectToDB(); 
+  const { id: aidId } = params;
 
   try {
-    let { id } = await req.json();
-    console.log("RECIPIENTT ID:" + id);
-    console.log("AIDDD ID" + aidId);
+    const { id: recipientId } = await req.json();
 
-    // التحقق من البيانات المدخلة
-    if (!id) {
+    if (!recipientId) {
       return NextResponse.json(
         { error: "معرف المستفيد مطلوب" },
         { status: 400 }
       );
     }
 
-    // البحث عن المعونة والمستفيد
     const [aid, recipient] = await Promise.all([
       Aid.findById(aidId),
-      Recipient.findById(id),
+      Recipient.findById(recipientId),
     ]);
 
-    if (!aid) {
+    if (!aid || !recipient) {
       return NextResponse.json(
-        { error: "المعونة غير موجودة" },
+        { error: "المعونة أو المستفيد غير موجود" },
         { status: 404 }
       );
     }
 
-    if (!recipient) {
-      return NextResponse.json(
-        { error: "المستفيد غير موجود" },
-        { status: 404 }
-      );
-    }
-
-    // منع التعيين المكرر
-    if (aid.recipients.includes(id)) {
+    if (aid.recipients.includes(recipientId)) {
       return NextResponse.json(
         { error: "هذه المعونة مسندة بالفعل لهذا المستفيد" },
         { status: 409 }
       );
     }
 
-    // تحديث البيانات في المعونة والمستفيد
+    // تحديث Aid وRecipient
     await Promise.all([
-      Aid.findByIdAndUpdate(aidId, { $push: { recipients: id } }),
-      Recipient.findByIdAndUpdate(id, {
-        $push: { aids: aidId },
+      Aid.findByIdAndUpdate(aidId, { $push: { recipients: recipientId } }),
+      Recipient.findByIdAndUpdate(recipientId, {
+        $push: {
+          aids: {
+            aid: aidId,
+            assignedAt: new Date()
+          }
+        },
         $inc: {
-          [`${
-            aid.type === "financial" ? "financialAidCount" : "moralAidCount"
-          }`]: 1,
+          [aid.type === "financial" ? "financialAidCount" : "moralAidCount"]: 1,
         },
       }),
     ]);

@@ -9,7 +9,7 @@ export async function middleware(request) {
 
 
   if (user && pathname === '/') {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return NextResponse.redirect(new URL('/dashboard/recipients', request.url))
   }
 
   if (!user && pathname.startsWith('/dashboard')) {

@@ -43,7 +43,7 @@ export default function LoginPage() {
     },
     onSuccess: () => {
       toast.success("Logged in successfully!");
-      router.push("/dashboard");
+      router.push("/dashboard/recipients");
     },
     onError: (error) => {
       toast.error(error.message || "An error occurred during login");

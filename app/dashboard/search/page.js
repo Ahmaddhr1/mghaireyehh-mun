@@ -16,14 +16,19 @@ import {
   TableCell,
 } from "@/components/ui/table";
 
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { Filter as FilterIcon } from "lucide-react";
 
 const fetchRecipients = async (filters) => {
   const params = new URLSearchParams();
 
   if (filters.name) params.append("name", filters.name);
-  if (filters.financialSituation) params.append("financialSituation", filters.financialSituation);
+  if (filters.financialSituation)
+    params.append("financialSituation", filters.financialSituation);
   if (filters.filterBy) params.append("filterBy", filters.filterBy);
   if (filters.sortOrder) params.append("sortOrder", filters.sortOrder);
 
@@ -40,7 +45,12 @@ const RecipientsSearchPage = () => {
   });
   const [openFilters, setOpenFilters] = useState(false);
 
-  const { data = [], isLoading, isError, refetch } = useQuery({
+  const {
+    data = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["recipients", filters],
     queryFn: () => fetchRecipients(filters),
     keepPreviousData: true,
@@ -59,7 +69,10 @@ const RecipientsSearchPage = () => {
   };
 
   return (
-    <section className="section mx-auto px-2 py-4 tracking-wider max-w-7xl" dir="rtl">
+    <section
+      className="section mx-auto px-2 py-4 tracking-wider max-w-7xl"
+      dir="rtl"
+    >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         {/* Always visible search input */}
         <Input
@@ -74,14 +87,20 @@ const RecipientsSearchPage = () => {
         {/* Filter button and popover */}
         <Popover open={openFilters} onOpenChange={setOpenFilters}>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2 max-w-xs">
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 max-w-xs"
+            >
               <FilterIcon className="w-4 h-4" />
-              فلترة
+              فلتر
             </Button>
           </PopoverTrigger>
           <PopoverContent align="end" className="w-[260px] p-4 space-y-4">
             <div>
-              <label htmlFor="financialSituation" className="block mb-1 font-semibold text-sm">
+              <label
+                htmlFor="financialSituation"
+                className="block mb-1 font-semibold text-sm"
+              >
                 الوضع المالي
               </label>
               <select
@@ -98,7 +117,10 @@ const RecipientsSearchPage = () => {
             </div>
 
             <div>
-              <label htmlFor="filterBy" className="block mb-1 font-semibold text-sm">
+              <label
+                htmlFor="filterBy"
+                className="block mb-1 font-semibold text-sm"
+              >
                 ترتيب حسب
               </label>
               <select
@@ -115,7 +137,10 @@ const RecipientsSearchPage = () => {
             </div>
 
             <div>
-              <label htmlFor="sortOrder" className="block mb-1 font-semibold text-sm">
+              <label
+                htmlFor="sortOrder"
+                className="block mb-1 font-semibold text-sm"
+              >
                 ترتيب
               </label>
               <select
@@ -140,19 +165,31 @@ const RecipientsSearchPage = () => {
       {isLoading ? (
         <Loading />
       ) : isError ? (
-        <div className="text-center py-8 text-red-600">حدث خطأ في تحميل البيانات</div>
+        <div className="text-center py-8 text-red-600">
+          حدث خطأ في تحميل البيانات
+        </div>
       ) : (
         <div className="overflow-x-auto border rounded-md">
           <Table className="min-w-[700px]">
             <TableHeader className="bg-gray-50">
               <TableRow>
                 <TableHead className="text-right w-[5%]">#</TableHead>
-                <TableHead className="text-right w-[25%]">الاسم الكامل</TableHead>
+                <TableHead className="text-right w-[25%]">
+                  الاسم الكامل
+                </TableHead>
                 <TableHead className="text-right w-[20%]">رقم الهاتف</TableHead>
-                <TableHead className="text-right w-[15%]">الوضع المالي</TableHead>
-                <TableHead className="text-right w-[10%]">المساعدات المالية</TableHead>
-                <TableHead className="text-right w-[10%]">المساعدات المعنوية</TableHead>
-                <TableHead className="text-right w-[10%]">مجموع المعونات</TableHead>
+                <TableHead className="text-right w-[15%]">
+                  الوضع المالي
+                </TableHead>
+                <TableHead className="text-right w-[10%]">
+                  المساعدات المالية
+                </TableHead>
+                <TableHead className="text-right w-[10%]">
+                  المساعدات المعنوية
+                </TableHead>
+                <TableHead className="text-right w-[10%]">
+                  مجموع المعونات
+                </TableHead>
                 <TableHead className="text-center w-[15%]">العمليات</TableHead>
               </TableRow>
             </TableHeader>
@@ -160,7 +197,10 @@ const RecipientsSearchPage = () => {
             <TableBody>
               {data.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-4 text-gray-500">
+                  <TableCell
+                    colSpan={8}
+                    className="text-center py-4 text-gray-500"
+                  >
                     لا يوجد مستفيدون
                   </TableCell>
                 </TableRow>
@@ -181,13 +221,23 @@ const RecipientsSearchPage = () => {
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{fullName}</TableCell>
                       <TableCell>{phoneNumber || "-"}</TableCell>
-                      <TableCell className="capitalize">{financialSituation || "-"}</TableCell>
+                      <TableCell className="capitalize">
+                        {financialSituation === "very poor"
+                          ? "فقير جدا"
+                          : "فقير" || "-"}
+                      </TableCell>
                       <TableCell>{financialAidCount || 0}</TableCell>
                       <TableCell>{moralAidCount || 0}</TableCell>
-                      <TableCell>{(financialAidCount || 0) + (moralAidCount || 0)}</TableCell>
+                      <TableCell>
+                        {(financialAidCount || 0) + (moralAidCount || 0)}
+                      </TableCell>
                       <TableCell className="flex justify-center gap-2">
                         <Link href={`/dashboard/recipients/${_id}`}>
-                          <Button size="sm" variant="outline" className="h-7 px-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 px-2"
+                          >
                             اطلاع
                           </Button>
                         </Link>
